@@ -1,0 +1,57 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.cluster import DBSCAN
+
+# Load the firewall logs CSV file
+file_path = 'C:/Users/Suggala Sai Preetham/Desktop/preetham gadi internships/kenoxoft/new_logs.csv'  # Update path if needed
+firewall_logs = pd.read_csv(file_path)
+
+# Select relevant columns for analysis
+relevant_columns = ['Src IP', 'Dst IP', 'Src port', 'Dst port', 'protocol', 'Log occurrence']
+data = firewall_logs[relevant_columns]
+
+# Encode categorical data (e.g., IP addresses, protocol)
+label_encoders = {}
+for column in ['Src IP', 'Dst IP', 'protocol']:
+    le = LabelEncoder()
+    data.loc[:, column] = le.fit_transform(data[column])
+    label_encoders[column] = le
+
+# Fill missing values
+data = data.fillna(data.median())
+
+# Standardize the data
+scaler = StandardScaler()
+data_scaled = scaler.fit_transform(data)
+
+# Apply DBSCAN for anomaly detection
+dbscan = DBSCAN(eps=1.5, min_samples=5)
+labels = dbscan.fit_predict(data_scaled)
+
+# Add labels to the original dataset
+firewall_logs['Anomaly'] = labels
+
+# Debugging: Check unique labels and data issues
+print("Unique DBSCAN labels:", set(labels))
+print("Shape of data:", data.shape)
+print("Missing values in Src/Dst ports:\n", firewall_logs[['Src port', 'Dst port']].isnull().sum())
+print("First few rows of data:\n", data.head())
+
+# Plot the results (2D projection using Src port and Dst port)
+plt.figure(figsize=(10, 6))
+plt.scatter(
+    firewall_logs['Src port'],
+    firewall_logs['Dst port'],
+    c=firewall_logs['Anomaly'],
+    cmap='Paired',
+    s=50,
+    edgecolor='k',
+    alpha=0.7  # Transparency to check overlapping points
+)
+plt.title("Anomaly Detection in Firewall Logs")
+plt.xlabel("Source IP")
+plt.ylabel("Destination IP")
+plt.colorbar(label="Cluster/Anomaly")
+plt.show(block=True) 
