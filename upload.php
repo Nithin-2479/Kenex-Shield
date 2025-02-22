@@ -153,7 +153,7 @@ function handleFileUpload($file, $logType)
 // Modify the analyze function to pass base64 data directly
 function analyzeLogFile($logId, $logType) {
     // Execute Python script with log type and log ID
-    $pythonScript = dirname(__FILE__) . '\script1\master.py';
+    $pythonScript = dirname(__FILE__) . '\scripts\master.py';
     error_log("Calling master Python script path: " . $pythonScript);
     
     // Escape the arguments for command line
