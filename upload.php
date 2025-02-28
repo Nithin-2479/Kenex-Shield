@@ -806,7 +806,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['logid'])) {
 
             <div class="stats-container">
                 <div class="stat-box">
-                    <h4>Source IP</h4>
+                    <h4>Source IP/Anomalies</h4>
                     <span id="sourceIp">N/A</span>
                 </div>
                 <div class="stat-box">
